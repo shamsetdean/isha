@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{i} SHA — Assistant RH</title>
+<style>
+  :root {
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --muted: #64748b;
+    --danger: #dc2626;
+    --danger-bg: #fef2f2;
+    --success: #16a34a;
+    --success-bg: #f0fdf4;
+    --radius: 12px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── ÉCRAN MOT DE PASSE ── */
+  #lock-screen {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 1rem;
+  }
+
+  .lock-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+
+  .lock-icon {
+    width: 56px;
+    height: 56px;
+    background: var(--accent-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+
+  .lock-icon svg { width: 26px; height: 26px; color: var(--accent); }
+
+  .lock-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+
+  .lock-subtitle {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin-bottom: 1.75rem;
+    line-height: 1.5;
+  }
+
+  .input-wrap {
+    position: relative;
+    margin-bottom: 1rem;
+  }
+
+  .input-wrap input {
+    width: 100%;
+    padding: 0.75rem 2.75rem 0.75rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    color: var(--text);
+    background: var(--surface);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .input-wrap input:focus { border-color: var(--accent); }
+
+  .toggle-pw {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .error-msg {
+    display: none;
+    background: var(--danger-bg);
+    color: var(--danger);
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    font-size: 0.8125rem;
+    margin-top: 0.75rem;
+    text-align: left;
+  }
+
+  .blocked-msg {
+    display: none;
+    background: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.8125rem;
+    margin-top: 0.75rem;
+    text-align: left;
+  }
+
+  .attempt-dots {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.2s;
+  }
+
+  .dot.used { background: var(--danger); }
+
+  /* ── CHATBOT ── */
+  #chat-screen {
+    display: none;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  .chat-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0.875rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .chat-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .chat-avatar {
+    width: 36px;
+    height: 36px;
+    background: var(--accent-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+
+  .chat-name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .chat-status {
+    font-size: 0.75rem;
+    color: var(--success);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--success);
+    border-radius: 50%;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-ghost {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8125rem;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .btn-ghost:hover { background: var(--bg); color: var(--text); }
+
+  .btn-danger-ghost {
+    background: none;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8125rem;
+    color: var(--danger);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background 0.15s;
+  }
+
+  .btn-danger-ghost:hover { background: var(--danger-bg); }
+
+  .iframe-wrap {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  #chatbot-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+  }
+
+  /* ── MODALE FEEDBACK ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 460px;
+    padding: 1.75rem;
+    transform: translateY(8px);
+    transition: transform 0.2s;
+  }
+
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+
+  .modal-title { font-size: 1rem; font-weight: 600; }
+
+  .btn-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    padding: 0.25rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+  }
+
+  .btn-close:hover { background: var(--bg); }
+
+  .form-group { margin-bottom: 1rem; }
+
+  .form-label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .form-input, .form-select, .form-textarea {
+    width: 100%;
+    padding: 0.65rem 0.875rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: var(--text);
+    background: var(--surface);
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .form-input:focus,
+  .form-select:focus,
+  .form-textarea:focus { border-color: var(--accent); }
+
+  .form-textarea { resize: vertical; min-height: 80px; }
+
+  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; }
+
+  .btn-secondary {
+    padding: 0.65rem 1.1rem;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: var(--muted);
+    cursor: pointer;
+  }
+
+  .btn-submit {
+    padding: 0.65rem 1.1rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .btn-submit:hover { opacity: 0.9; }
+
+  .feedback-sent {
+    display: none;
+    text-align: center;
+    padding: 1rem 0;
+  }
+
+  .feedback-sent-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--success-bg);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.75rem;
+  }
+
+  .feedback-sent-title { font-weight: 600; margin-bottom: 0.25rem; }
+  .feedback-sent-sub { font-size: 0.875rem; color: var(--muted); }
+
+  /* ── SESSION TIMER ── */
+  .session-badge {
+    font-size: 0.75rem;
+    color: var(--muted);
+    padding: 0.3rem 0.6rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ ÉCRAN MOT DE PASSE ═══════════════════ -->
+<div id="lock-screen">
+  <div class="lock-card">
+    <div class="lock-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+    </div>
+    <div class="lock-title">{i} SHA — Assistant RH</div>
+    <div class="lock-subtitle">Accès réservé aux membres de l'équipe.<br>Saisissez le mot de passe pour continuer.</div>
+
+    <div class="input-wrap">
+      <input type="password" id="pw-input" placeholder="Mot de passe" autocomplete="off" />
+      <button class="toggle-pw" id="toggle-pw" type="button" aria-label="Afficher le mot de passe">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="eye-icon">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+      </button>
+    </div>
+
+    <button class="btn-primary" id="unlock-btn">Déverrouiller</button>
+
+    <div class="error-msg" id="error-msg">
+      <strong>Mot de passe incorrect.</strong> Vérifiez et réessayez.
+    </div>
+    <div class="blocked-msg" id="blocked-msg">
+      <strong>Accès temporairement bloqué.</strong><br>
+      Trop de tentatives échouées. Réessayez dans <span id="countdown">5:00</span>.
+    </div>
+
+    <div class="attempt-dots">
+      <div class="dot" id="d1"></div>
+      <div class="dot" id="d2"></div>
+      <div class="dot" id="d3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ ÉCRAN CHATBOT ═══════════════════ -->
+<div id="chat-screen">
+  <header class="chat-header">
+    <div class="chat-brand">
+      <div class="chat-avatar">{i}</div>
+      <div>
+        <div class="chat-name">{i} SHA — Assistant RH</div>
+        <div class="chat-status"><span class="status-dot"></span> En ligne</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <span class="session-badge" id="session-timer">Session : 4h00</span>
+      <button class="btn-ghost" id="feedback-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        Signaler
+      </button>
+      <button class="btn-danger-ghost" id="logout-btn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        Déconnexion
+      </button>
+    </div>
+  </header>
+  <div class="iframe-wrap">
+    <iframe id="chatbot-frame" title="{i} SHA Assistant RH" allow="microphone"></iframe>
+  </div>
+</div>
+
+<!-- ═══════════════════ MODALE FEEDBACK ═══════════════════ -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div id="feedback-form-wrap">
+      <div class="modal-header">
+        <div class="modal-title">Signaler un problème</div>
+        <button class="btn-close" id="modal-close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Type de problème</label>
+        <select class="form-select" id="f-type">
+          <option value="">Sélectionner...</option>
+          <option>Réponse incorrecte ou imprécise</option>
+          <option>Le chatbot ne répond pas</option>
+          <option>Problème d'affichage</option>
+          <option>Question sans réponse</option>
+          <option>Autre</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Votre nom (optionnel)</label>
+        <input type="text" class="form-input" id="f-name" placeholder="Prénom Nom" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea class="form-textarea" id="f-desc" placeholder="Décrivez le problème rencontré..."></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="modal-cancel">Annuler</button>
+        <button class="btn-submit" id="f-submit">Envoyer</button>
+      </div>
+    </div>
+    <div class="feedback-sent" id="feedback-sent">
+      <div class="feedback-sent-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="feedback-sent-title">Merci pour votre retour</div>
+      <div class="feedback-sent-sub">Votre signalement a bien été enregistré.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const HASH = "cf5c920396ee956f696c9214d1677fba042b9557d49113263dac33c7fd4e1436";
+const SESSION_DURATION = 4 * 60 * 60 * 1000;
+const BLOCK_DURATION   = 5 * 60 * 1000;
+const MAX_ATTEMPTS     = 3;
+const CHATBOT_SRC      = "https://www.chatbase.co/chatbot-iframe/c8tQHdptpejBh0oDzU8Fd";
+
+const SK = {
+  session: "isha_session",
+  expiry:  "isha_expiry",
+  block:   "isha_block",
+  att:     "isha_attempts"
+};
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+function now() { return Date.now(); }
+
+function getAttempts()  { return parseInt(sessionStorage.getItem(SK.att) || "0"); }
+function setAttempts(n) { sessionStorage.setItem(SK.att, n); }
+
+function isBlocked() {
+  const b = localStorage.getItem(SK.block);
+  if (!b) return false;
+  if (now() > parseInt(b)) { localStorage.removeItem(SK.block); return false; }
+  return true;
+}
+
+function isSessionValid() {
+  const exp = localStorage.getItem(SK.expiry);
+  return exp && now() < parseInt(exp);
+}
+
+function startSession() {
+  localStorage.setItem(SK.session, "1");
+  localStorage.setItem(SK.expiry, now() + SESSION_DURATION);
+  sessionStorage.removeItem(SK.att);
+}
+
+function clearSession() {
+  localStorage.removeItem(SK.session);
+  localStorage.removeItem(SK.expiry);
+}
+
+const lockEl   = document.getElementById("lock-screen");
+const chatEl   = document.getElementById("chat-screen");
+const pwInput  = document.getElementById("pw-input");
+const unlockBtn = document.getElementById("unlock-btn");
+const errorMsg  = document.getElementById("error-msg");
+const blockedMsg = document.getElementById("blocked-msg");
+const dots = [document.getElementById("d1"), document.getElementById("d2"), document.getElementById("d3")];
+
+function showChat() {
+  lockEl.style.display = "none";
+  chatEl.style.display = "flex";
+  document.getElementById("chatbot-frame").src = CHATBOT_SRC;
+  startSessionTimer();
+}
+
+function showLock() {
+  lockEl.style.display = "flex";
+  chatEl.style.display = "none";
+  clearSession();
+}
+
+function updateDots(n) {
+  dots.forEach((d, i) => d.classList.toggle("used", i < n));
+}
+
+function startBlockTimer() {
+  const unblockAt = now() + BLOCK_DURATION;
+  localStorage.setItem(SK.block, unblockAt);
+  blockedMsg.style.display = "block";
+  errorMsg.style.display   = "none";
+  unlockBtn.disabled       = true;
+  pwInput.disabled         = true;
+
+  const cd = document.getElementById("countdown");
+  const tick = setInterval(() => {
+    const left = Math.max(0, Math.ceil((unblockAt - now()) / 1000));
+    const m = String(Math.floor(left / 60)).padStart(1,"0");
+    const s = String(left % 60).padStart(2,"0");
+    cd.textContent = `${m}:${s}`;
+    if (left <= 0) {
+      clearInterval(tick);
+      blockedMsg.style.display = "none";
+      unlockBtn.disabled       = false;
+      pwInput.disabled         = false;
+      setAttempts(0);
+      updateDots(0);
+    }
+  }, 1000);
+}
+
+function showBlocked() {
+  const unblockAt = parseInt(localStorage.getItem(SK.block));
+  blockedMsg.style.display = "block";
+  unlockBtn.disabled       = true;
+  pwInput.disabled         = true;
+  const cd = document.getElementById("countdown");
+  const tick = setInterval(() => {
+    const left = Math.max(0, Math.ceil((unblockAt - now()) / 1000));
+    const m = String(Math.floor(left / 60)).padStart(1,"0");
+    const s = String(left % 60).padStart(2,"0");
+    cd.textContent = `${m}:${s}`;
+    if (left <= 0) {
+      clearInterval(tick);
+      blockedMsg.style.display = "none";
+      unlockBtn.disabled       = false;
+      pwInput.disabled         = false;
+      setAttempts(0);
+      updateDots(0);
+    }
+  }, 1000);
+}
+
+async function tryUnlock() {
+  if (isBlocked()) { showBlocked(); return; }
+
+  const val = pwInput.value;
+  if (!val) return;
+
+  const hash = await sha256(val);
+  if (hash === HASH) {
+    startSession();
+    showChat();
+  } else {
+    let att = getAttempts() + 1;
+    setAttempts(att);
+    updateDots(att);
+    if (att >= MAX_ATTEMPTS) {
+      startBlockTimer();
+    } else {
+      errorMsg.style.display = "block";
+      pwInput.value = "";
+      pwInput.focus();
+    }
+  }
+}
+
+unlockBtn.addEventListener("click", tryUnlock);
+pwInput.addEventListener("keydown", e => { if (e.key === "Enter") tryUnlock(); });
+
+document.getElementById("toggle-pw").addEventListener("click", () => {
+  const t = pwInput.type === "password" ? "text" : "password";
+  pwInput.type = t;
+});
+
+document.getElementById("logout-btn").addEventListener("click", showLock);
+
+/* ── SESSION TIMER ── */
+function startSessionTimer() {
+  const expiry = parseInt(localStorage.getItem(SK.expiry));
+  const timerEl = document.getElementById("session-timer");
+
+  const tick = setInterval(() => {
+    const left = Math.max(0, Math.ceil((expiry - now()) / 1000));
+    if (left === 0) { clearInterval(tick); showLock(); return; }
+    const h = String(Math.floor(left / 3600));
+    const m = String(Math.floor((left % 3600) / 60)).padStart(2,"0");
+    const s = String(left % 60).padStart(2,"0");
+    timerEl.textContent = `Session : ${h}h${m}`;
+  }, 60000);
+  const left = Math.max(0, Math.ceil((expiry - now()) / 1000));
+  const h = String(Math.floor(left / 3600));
+  const m = String(Math.floor((left % 3600) / 60)).padStart(2,"0");
+  timerEl.textContent = `Session : ${h}h${m}`;
+}
+
+/* ── FEEDBACK ── */
+const overlay  = document.getElementById("modal-overlay");
+const formWrap = document.getElementById("feedback-form-wrap");
+const sentWrap = document.getElementById("feedback-sent");
+
+document.getElementById("feedback-btn").addEventListener("click", () => {
+  formWrap.style.display = "block";
+  sentWrap.style.display = "none";
+  overlay.classList.add("open");
+});
+
+function closeModal() { overlay.classList.remove("open"); }
+document.getElementById("modal-close").addEventListener("click", closeModal);
+document.getElementById("modal-cancel").addEventListener("click", closeModal);
+overlay.addEventListener("click", e => { if (e.target === overlay) closeModal(); });
+
+document.getElementById("f-submit").addEventListener("click", () => {
+  const type = document.getElementById("f-type").value;
+  const desc = document.getElementById("f-desc").value.trim();
+  if (!type && !desc) return;
+  formWrap.style.display = "none";
+  sentWrap.style.display  = "block";
+  setTimeout(closeModal, 2200);
+  document.getElementById("f-type").value = "";
+  document.getElementById("f-name").value = "";
+  document.getElementById("f-desc").value = "";
+});
+
+/* ── AUTO-RESTORE SESSION ── */
+if (isBlocked()) {
+  showBlocked();
+} else if (isSessionValid()) {
+  showChat();
+}
+</script>
+</body>
+</html>
