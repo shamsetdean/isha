@@ -383,6 +383,18 @@
 
   #chatbot-frame { width: 100%; height: 100%; border: none; display: block; }
 
+  /* Masque le branding Chatbase en bas de l'iframe */
+  .iframe-mask {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 36px;
+    background: var(--surface);
+    z-index: 5;
+    pointer-events: none;
+  }
+
   /* ── RESPONSIVE ── */
   @media (max-width: 768px) {
     .lock-card { padding: 2rem 1.5rem; border-radius: 12px; }
@@ -514,6 +526,7 @@
       <div class="loader-text">Chargement de l'assistant…</div>
     </div>
     <iframe id="chatbot-frame" title="{i} SHA Assistant RH" allow="microphone"></iframe>
+    <div class="iframe-mask"></div>
   </div>
 </div>
 
