@@ -173,11 +173,11 @@
 
   .dot.used { background: var(--danger); }
 
-  /* ── CHATBOT ── */
   #chat-screen {
     display: none;
     flex-direction: column;
     height: 100vh;
+    height: 100dvh;
   }
 
   .chat-header {
@@ -237,21 +237,7 @@
     gap: 8px;
   }
 
-  .btn-ghost {
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.4rem 0.8rem;
-    font-size: 0.8125rem;
-    color: var(--muted);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    transition: background 0.15s, color 0.15s;
-  }
 
-  .btn-ghost:hover { background: var(--bg); color: var(--text); }
 
   .btn-danger-ghost {
     background: none;
@@ -282,136 +268,7 @@
     display: block;
   }
 
-  /* ── MODALE FEEDBACK ── */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(15,23,42,0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 200;
-    padding: 1rem;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.2s;
-  }
 
-  .modal-overlay.open {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  .modal {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    box-shadow: var(--shadow);
-    width: 100%;
-    max-width: 460px;
-    padding: 1.75rem;
-    transform: translateY(8px);
-    transition: transform 0.2s;
-  }
-
-  .modal-overlay.open .modal { transform: translateY(0); }
-
-  .modal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1.25rem;
-  }
-
-  .modal-title { font-size: 1rem; font-weight: 600; }
-
-  .btn-close {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--muted);
-    padding: 0.25rem;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-  }
-
-  .btn-close:hover { background: var(--bg); }
-
-  .form-group { margin-bottom: 1rem; }
-
-  .form-label {
-    display: block;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    color: var(--muted);
-    margin-bottom: 0.4rem;
-  }
-
-  .form-input, .form-select, .form-textarea {
-    width: 100%;
-    padding: 0.65rem 0.875rem;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    font-size: 0.9rem;
-    color: var(--text);
-    background: var(--surface);
-    font-family: inherit;
-    outline: none;
-    transition: border-color 0.15s;
-  }
-
-  .form-input:focus,
-  .form-select:focus,
-  .form-textarea:focus { border-color: var(--accent); }
-
-  .form-textarea { resize: vertical; min-height: 80px; }
-
-  .modal-footer { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; }
-
-  .btn-secondary {
-    padding: 0.65rem 1.1rem;
-    background: none;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 0.875rem;
-    color: var(--muted);
-    cursor: pointer;
-  }
-
-  .btn-submit {
-    padding: 0.65rem 1.1rem;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: opacity 0.15s;
-  }
-
-  .btn-submit:hover { opacity: 0.9; }
-
-  .feedback-sent {
-    display: none;
-    text-align: center;
-    padding: 1rem 0;
-  }
-
-  .feedback-sent-icon {
-    width: 48px;
-    height: 48px;
-    background: var(--success-bg);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 0.75rem;
-  }
-
-  .feedback-sent-title { font-weight: 600; margin-bottom: 0.25rem; }
-  .feedback-sent-sub { font-size: 0.875rem; color: var(--muted); }
 
   /* ── SESSION TIMER ── */
   .session-badge {
@@ -421,6 +278,43 @@
     background: var(--bg);
     border: 1px solid var(--border);
     border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    .lock-card { padding: 2rem 1.5rem; border-radius: 12px; }
+    .chat-name { font-size: 0.875rem; }
+    .session-badge { display: none; }
+  }
+
+  @media (max-width: 480px) {
+    #lock-screen { align-items: flex-end; padding: 0; }
+    .lock-card {
+      border-radius: 20px 20px 0 0;
+      padding: 2rem 1.25rem 2.5rem;
+      max-width: 100%;
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+    }
+    .lock-icon { width: 48px; height: 48px; margin-bottom: 1.25rem; }
+    .lock-title { font-size: 1.1rem; }
+    .lock-subtitle { font-size: 0.8125rem; margin-bottom: 1.5rem; }
+    .input-wrap input {
+      font-size: 16px;
+      padding: 0.875rem 2.75rem 0.875rem 1rem;
+    }
+    .btn-primary { padding: 0.9rem 1rem; font-size: 1rem; }
+    .chat-header { padding: 0.75rem 1rem; }
+    .chat-avatar { width: 32px; height: 32px; font-size: 0.6875rem; }
+    .chat-name { font-size: 0.8125rem; }
+    .chat-status { font-size: 0.6875rem; }
+    .btn-danger-ghost { padding: 0.4rem 0.6rem; font-size: 0; }
+    .btn-danger-ghost svg { width: 16px; height: 16px; }
+  }
+
+  @media (max-width: 360px) {
+    .lock-title { font-size: 1rem; }
+    .lock-subtitle { font-size: 0.75rem; }
   }
 </style>
 </head>
@@ -478,10 +372,7 @@
     </div>
     <div class="header-actions">
       <span class="session-badge" id="session-timer">Session : 4h00</span>
-      <button class="btn-ghost" id="feedback-btn">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-        Signaler
-      </button>
+
       <button class="btn-danger-ghost" id="logout-btn">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
         Déconnexion
@@ -493,49 +384,7 @@
   </div>
 </div>
 
-<!-- ═══════════════════ MODALE FEEDBACK ═══════════════════ -->
-<div class="modal-overlay" id="modal-overlay">
-  <div class="modal">
-    <div id="feedback-form-wrap">
-      <div class="modal-header">
-        <div class="modal-title">Signaler un problème</div>
-        <button class="btn-close" id="modal-close">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Type de problème</label>
-        <select class="form-select" id="f-type">
-          <option value="">Sélectionner...</option>
-          <option>Réponse incorrecte ou imprécise</option>
-          <option>Le chatbot ne répond pas</option>
-          <option>Problème d'affichage</option>
-          <option>Question sans réponse</option>
-          <option>Autre</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Votre nom (optionnel)</label>
-        <input type="text" class="form-input" id="f-name" placeholder="Prénom Nom" />
-      </div>
-      <div class="form-group">
-        <label class="form-label">Description</label>
-        <textarea class="form-textarea" id="f-desc" placeholder="Décrivez le problème rencontré..."></textarea>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" id="modal-cancel">Annuler</button>
-        <button class="btn-submit" id="f-submit">Envoyer</button>
-      </div>
-    </div>
-    <div class="feedback-sent" id="feedback-sent">
-      <div class="feedback-sent-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-      </div>
-      <div class="feedback-sent-title">Merci pour votre retour</div>
-      <div class="feedback-sent-sub">Votre signalement a bien été enregistré.</div>
-    </div>
-  </div>
-</div>
+
 
 <script>
 const HASH = "cf5c920396ee956f696c9214d1677fba042b9557d49113263dac33c7fd4e1436";
@@ -709,33 +558,7 @@ function startSessionTimer() {
   timerEl.textContent = `Session : ${h}h${m}`;
 }
 
-/* ── FEEDBACK ── */
-const overlay  = document.getElementById("modal-overlay");
-const formWrap = document.getElementById("feedback-form-wrap");
-const sentWrap = document.getElementById("feedback-sent");
 
-document.getElementById("feedback-btn").addEventListener("click", () => {
-  formWrap.style.display = "block";
-  sentWrap.style.display = "none";
-  overlay.classList.add("open");
-});
-
-function closeModal() { overlay.classList.remove("open"); }
-document.getElementById("modal-close").addEventListener("click", closeModal);
-document.getElementById("modal-cancel").addEventListener("click", closeModal);
-overlay.addEventListener("click", e => { if (e.target === overlay) closeModal(); });
-
-document.getElementById("f-submit").addEventListener("click", () => {
-  const type = document.getElementById("f-type").value;
-  const desc = document.getElementById("f-desc").value.trim();
-  if (!type && !desc) return;
-  formWrap.style.display = "none";
-  sentWrap.style.display  = "block";
-  setTimeout(closeModal, 2200);
-  document.getElementById("f-type").value = "";
-  document.getElementById("f-name").value = "";
-  document.getElementById("f-desc").value = "";
-});
 
 /* ── AUTO-RESTORE SESSION ── */
 if (isBlocked()) {
