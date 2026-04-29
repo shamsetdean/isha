@@ -17,6 +17,9 @@
     --danger-bg: #fef2f2;
     --success: #16a34a;
     --success-bg: #f0fdf4;
+    --warning: #d97706;
+    --warning-bg: #fffbeb;
+    --warning-border: #fde68a;
     --radius: 12px;
     --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
   }
@@ -32,16 +35,24 @@
     flex-direction: column;
   }
 
-  /* ── ÉCRAN MOT DE PASSE ── */
+  /* ── B — FOND GÉOMÉTRIQUE ── */
   #lock-screen {
     position: fixed;
     inset: 0;
-    background: var(--bg);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 100;
     padding: 1rem;
+    background-color: #eef2ff;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(37,99,235,0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(37,99,235,0.06) 0%, transparent 50%),
+      linear-gradient(135deg, rgba(37,99,235,0.03) 25%, transparent 25%),
+      linear-gradient(225deg, rgba(37,99,235,0.03) 25%, transparent 25%),
+      linear-gradient(315deg, rgba(37,99,235,0.03) 25%, transparent 25%),
+      linear-gradient(45deg,  rgba(37,99,235,0.03) 25%, transparent 25%);
+    background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px, 40px 40px, 40px 40px;
   }
 
   .lock-card {
@@ -63,10 +74,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 1.5rem;
+    margin: 0 auto 1.25rem;
   }
 
   .lock-icon svg { width: 26px; height: 26px; color: var(--accent); }
+
+  .beta-badge {
+    display: inline-block;
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+    border-radius: 20px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.65rem;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+  }
 
   .lock-title {
     font-size: 1.25rem;
@@ -173,12 +198,51 @@
 
   .dot.used { background: var(--danger); }
 
+  /* ── CHATBOT ── */
   #chat-screen {
     display: none;
     flex-direction: column;
     height: 100vh;
     height: 100dvh;
   }
+
+  /* ── C — MESSAGE DE BIENVENUE ── */
+  #welcome-banner {
+    display: none;
+    background: var(--success-bg);
+    border-bottom: 1px solid #bbf7d0;
+    padding: 0.6rem 1.25rem;
+    font-size: 0.8125rem;
+    color: #166534;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    animation: slideDown 0.3s ease;
+  }
+
+  #welcome-banner.visible { display: flex; }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── F — AVERTISSEMENT SESSION ── */
+  #session-warning {
+    display: none;
+    background: var(--warning-bg);
+    border-bottom: 1px solid var(--warning-border);
+    padding: 0.6rem 1.25rem;
+    font-size: 0.8125rem;
+    color: #92400e;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  #session-warning.visible { display: flex; }
+
+  .banner-icon { flex-shrink: 0; }
 
   .chat-header {
     background: var(--surface);
@@ -190,11 +254,7 @@
     flex-shrink: 0;
   }
 
-  .chat-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+  .chat-brand { display: flex; align-items: center; gap: 10px; }
 
   .chat-avatar {
     width: 36px;
@@ -214,6 +274,22 @@
     font-size: 0.9375rem;
     font-weight: 600;
     color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .header-beta {
+    display: inline-block;
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+    border-radius: 20px;
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 0.15rem 0.45rem;
+    text-transform: uppercase;
   }
 
   .chat-status {
@@ -231,13 +307,32 @@
     border-radius: 50%;
   }
 
-  .header-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  .header-actions { display: flex; align-items: center; gap: 8px; }
+
+  .session-badge {
+    font-size: 0.75rem;
+    color: var(--muted);
+    padding: 0.3rem 0.6rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    white-space: nowrap;
   }
 
+  /* ── E — BOUTON PLEIN ÉCRAN ── */
+  .btn-icon {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.4rem 0.5rem;
+    color: var(--muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background 0.15s, color 0.15s;
+  }
 
+  .btn-icon:hover { background: var(--bg); color: var(--text); }
 
   .btn-danger-ghost {
     background: none;
@@ -255,31 +350,38 @@
 
   .btn-danger-ghost:hover { background: var(--danger-bg); }
 
-  .iframe-wrap {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-  }
+  /* ── D — LOADER IFRAME ── */
+  .iframe-wrap { flex: 1; position: relative; overflow: hidden; }
 
-  #chatbot-frame {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-  }
-
-
-
-  /* ── SESSION TIMER ── */
-  .session-badge {
-    font-size: 0.75rem;
-    color: var(--muted);
-    padding: 0.3rem 0.6rem;
+  #iframe-loader {
+    position: absolute;
+    inset: 0;
     background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    white-space: nowrap;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    z-index: 10;
+    transition: opacity 0.4s;
   }
+
+  #iframe-loader.hidden { opacity: 0; pointer-events: none; }
+
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loader-text { font-size: 0.875rem; color: var(--muted); }
+
+  #chatbot-frame { width: 100%; height: 100%; border: none; display: block; }
 
   /* ── RESPONSIVE ── */
   @media (max-width: 768px) {
@@ -296,13 +398,10 @@
       max-width: 100%;
       box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
     }
-    .lock-icon { width: 48px; height: 48px; margin-bottom: 1.25rem; }
+    .lock-icon { width: 48px; height: 48px; margin-bottom: 1rem; }
     .lock-title { font-size: 1.1rem; }
     .lock-subtitle { font-size: 0.8125rem; margin-bottom: 1.5rem; }
-    .input-wrap input {
-      font-size: 16px;
-      padding: 0.875rem 2.75rem 0.875rem 1rem;
-    }
+    .input-wrap input { font-size: 16px; padding: 0.875rem 2.75rem 0.875rem 1rem; }
     .btn-primary { padding: 0.9rem 1rem; font-size: 1rem; }
     .chat-header { padding: 0.75rem 1rem; }
     .chat-avatar { width: 32px; height: 32px; font-size: 0.6875rem; }
@@ -310,6 +409,7 @@
     .chat-status { font-size: 0.6875rem; }
     .btn-danger-ghost { padding: 0.4rem 0.6rem; font-size: 0; }
     .btn-danger-ghost svg { width: 16px; height: 16px; }
+    .header-beta { display: none; }
   }
 
   @media (max-width: 360px) {
@@ -329,13 +429,14 @@
         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
       </svg>
     </div>
+    <div class="beta-badge">Version bêta</div>
     <div class="lock-title">{i} SHA — Assistant RH</div>
     <div class="lock-subtitle">Accès réservé aux membres de l'équipe.<br>Saisissez le mot de passe pour continuer.</div>
 
     <div class="input-wrap">
       <input type="password" id="pw-input" placeholder="Mot de passe" autocomplete="off" />
       <button class="toggle-pw" id="toggle-pw" type="button" aria-label="Afficher le mot de passe">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="eye-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
           <circle cx="12" cy="12" r="3"></circle>
         </svg>
@@ -362,35 +463,67 @@
 
 <!-- ═══════════════════ ÉCRAN CHATBOT ═══════════════════ -->
 <div id="chat-screen">
+
+  <!-- C — Bienvenue -->
+  <div id="welcome-banner">
+    <svg class="banner-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+    <span>Vous êtes connecté. Session valide jusqu'à <strong id="session-until"></strong>. Version bêta — vos retours sont bienvenus.</span>
+  </div>
+
+  <!-- F — Avertissement expiration -->
+  <div id="session-warning">
+    <svg class="banner-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+    <span>Votre session expire dans <strong>10 minutes</strong>. Enregistrez vos échanges importants.</span>
+  </div>
+
   <header class="chat-header">
     <div class="chat-brand">
       <div class="chat-avatar">{i}</div>
       <div>
-        <div class="chat-name">{i} SHA — Assistant RH</div>
+        <div class="chat-name">
+          {i} SHA — Assistant RH
+          <span class="header-beta">bêta</span>
+        </div>
         <div class="chat-status"><span class="status-dot"></span> En ligne</div>
       </div>
     </div>
     <div class="header-actions">
       <span class="session-badge" id="session-timer">Session : 4h00</span>
-
+      <!-- E — Plein écran -->
+      <button class="btn-icon" id="fullscreen-btn" title="Plein écran">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="fs-expand">
+          <polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline>
+          <line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line>
+        </svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="fs-shrink" style="display:none">
+          <polyline points="4 14 10 14 10 20"></polyline><polyline points="20 10 14 10 14 4"></polyline>
+          <line x1="10" y1="14" x2="3" y2="21"></line><line x1="21" y1="3" x2="14" y2="10"></line>
+        </svg>
+      </button>
       <button class="btn-danger-ghost" id="logout-btn">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
         Déconnexion
       </button>
     </div>
   </header>
+
   <div class="iframe-wrap">
+    <!-- D — Loader -->
+    <div id="iframe-loader">
+      <div class="spinner"></div>
+      <div class="loader-text">Chargement de l'assistant…</div>
+    </div>
     <iframe id="chatbot-frame" title="{i} SHA Assistant RH" allow="microphone"></iframe>
   </div>
 </div>
 
-
-
 <script>
-const HASH = "cf5c920396ee956f696c9214d1677fba042b9557d49113263dac33c7fd4e1436";
+const HASH             = "cf5c920396ee956f696c9214d1677fba042b9557d49113263dac33c7fd4e1436";
 const SESSION_DURATION = 4 * 60 * 60 * 1000;
 const BLOCK_DURATION   = 5 * 60 * 1000;
 const MAX_ATTEMPTS     = 3;
+const IDLE_LIMIT       = 30 * 60 * 1000;
+const WARN_BEFORE      = 10 * 60 * 1000;
 const CHATBOT_SRC      = "https://www.chatbase.co/chatbot-iframe/c8tQHdptpejBh0oDzU8Fd";
 
 const SK = {
@@ -406,7 +539,6 @@ async function sha256(str) {
 }
 
 function now() { return Date.now(); }
-
 function getAttempts()  { return parseInt(sessionStorage.getItem(SK.att) || "0"); }
 function setAttempts(n) { sessionStorage.setItem(SK.att, n); }
 
@@ -433,19 +565,58 @@ function clearSession() {
   localStorage.removeItem(SK.expiry);
 }
 
-const lockEl   = document.getElementById("lock-screen");
-const chatEl   = document.getElementById("chat-screen");
-const pwInput  = document.getElementById("pw-input");
-const unlockBtn = document.getElementById("unlock-btn");
-const errorMsg  = document.getElementById("error-msg");
+const lockEl     = document.getElementById("lock-screen");
+const chatEl     = document.getElementById("chat-screen");
+const pwInput    = document.getElementById("pw-input");
+const unlockBtn  = document.getElementById("unlock-btn");
+const errorMsg   = document.getElementById("error-msg");
 const blockedMsg = document.getElementById("blocked-msg");
 const dots = [document.getElementById("d1"), document.getElementById("d2"), document.getElementById("d3")];
+
+/* ── C — BIENVENUE ── */
+function showWelcomeBanner() {
+  const expiry = parseInt(localStorage.getItem(SK.expiry));
+  const d = new Date(expiry);
+  const hh = String(d.getHours()).padStart(2,"0");
+  const mm = String(d.getMinutes()).padStart(2,"0");
+  document.getElementById("session-until").textContent = hh + "h" + mm;
+  const banner = document.getElementById("welcome-banner");
+  banner.classList.add("visible");
+  setTimeout(() => banner.classList.remove("visible"), 5000);
+}
+
+/* ── D — LOADER ── */
+function setupLoader() {
+  const frame  = document.getElementById("chatbot-frame");
+  const loader = document.getElementById("iframe-loader");
+  frame.addEventListener("load", () => {
+    loader.classList.add("hidden");
+    setTimeout(() => { loader.style.display = "none"; }, 400);
+  });
+}
+
+/* ── E — PLEIN ÉCRAN ── */
+let isFullscreen = false;
+document.getElementById("fullscreen-btn").addEventListener("click", () => {
+  isFullscreen = !isFullscreen;
+  const header  = document.querySelector(".chat-header");
+  const welcome = document.getElementById("welcome-banner");
+  const warning = document.getElementById("session-warning");
+  header.style.display  = isFullscreen ? "none" : "";
+  welcome.style.display = isFullscreen ? "none" : "";
+  warning.style.display = isFullscreen ? "none" : "";
+  document.getElementById("fs-expand").style.display = isFullscreen ? "none" : "";
+  document.getElementById("fs-shrink").style.display = isFullscreen ? ""     : "none";
+});
 
 function showChat() {
   lockEl.style.display = "none";
   chatEl.style.display = "flex";
   document.getElementById("chatbot-frame").src = CHATBOT_SRC;
+  setupLoader();
+  showWelcomeBanner();
   startSessionTimer();
+  startIdleWatcher();
 }
 
 function showLock() {
@@ -458,59 +629,46 @@ function updateDots(n) {
   dots.forEach((d, i) => d.classList.toggle("used", i < n));
 }
 
+function runCountdown(unblockAt) {
+  const cd = document.getElementById("countdown");
+  const tick = setInterval(() => {
+    const left = Math.max(0, Math.ceil((unblockAt - now()) / 1000));
+    const m = String(Math.floor(left / 60)).padStart(1,"0");
+    const s = String(left % 60).padStart(2,"0");
+    cd.textContent = m + ":" + s;
+    if (left <= 0) {
+      clearInterval(tick);
+      blockedMsg.style.display = "none";
+      unlockBtn.disabled = false;
+      pwInput.disabled   = false;
+      setAttempts(0);
+      updateDots(0);
+    }
+  }, 1000);
+}
+
 function startBlockTimer() {
   const unblockAt = now() + BLOCK_DURATION;
   localStorage.setItem(SK.block, unblockAt);
   blockedMsg.style.display = "block";
   errorMsg.style.display   = "none";
-  unlockBtn.disabled       = true;
-  pwInput.disabled         = true;
-
-  const cd = document.getElementById("countdown");
-  const tick = setInterval(() => {
-    const left = Math.max(0, Math.ceil((unblockAt - now()) / 1000));
-    const m = String(Math.floor(left / 60)).padStart(1,"0");
-    const s = String(left % 60).padStart(2,"0");
-    cd.textContent = `${m}:${s}`;
-    if (left <= 0) {
-      clearInterval(tick);
-      blockedMsg.style.display = "none";
-      unlockBtn.disabled       = false;
-      pwInput.disabled         = false;
-      setAttempts(0);
-      updateDots(0);
-    }
-  }, 1000);
+  unlockBtn.disabled = true;
+  pwInput.disabled   = true;
+  runCountdown(unblockAt);
 }
 
 function showBlocked() {
   const unblockAt = parseInt(localStorage.getItem(SK.block));
   blockedMsg.style.display = "block";
-  unlockBtn.disabled       = true;
-  pwInput.disabled         = true;
-  const cd = document.getElementById("countdown");
-  const tick = setInterval(() => {
-    const left = Math.max(0, Math.ceil((unblockAt - now()) / 1000));
-    const m = String(Math.floor(left / 60)).padStart(1,"0");
-    const s = String(left % 60).padStart(2,"0");
-    cd.textContent = `${m}:${s}`;
-    if (left <= 0) {
-      clearInterval(tick);
-      blockedMsg.style.display = "none";
-      unlockBtn.disabled       = false;
-      pwInput.disabled         = false;
-      setAttempts(0);
-      updateDots(0);
-    }
-  }, 1000);
+  unlockBtn.disabled = true;
+  pwInput.disabled   = true;
+  runCountdown(unblockAt);
 }
 
 async function tryUnlock() {
   if (isBlocked()) { showBlocked(); return; }
-
   const val = pwInput.value;
   if (!val) return;
-
   const hash = await sha256(val);
   if (hash === HASH) {
     startSession();
@@ -531,36 +689,51 @@ async function tryUnlock() {
 
 unlockBtn.addEventListener("click", tryUnlock);
 pwInput.addEventListener("keydown", e => { if (e.key === "Enter") tryUnlock(); });
-
 document.getElementById("toggle-pw").addEventListener("click", () => {
-  const t = pwInput.type === "password" ? "text" : "password";
-  pwInput.type = t;
+  pwInput.type = pwInput.type === "password" ? "text" : "password";
 });
-
 document.getElementById("logout-btn").addEventListener("click", showLock);
 
-/* ── SESSION TIMER ── */
-function startSessionTimer() {
-  const expiry = parseInt(localStorage.getItem(SK.expiry));
-  const timerEl = document.getElementById("session-timer");
+/* ── SESSION TIMER + F AVERTISSEMENT ── */
+let warnShown = false;
 
-  const tick = setInterval(() => {
+function startSessionTimer() {
+  const expiry  = parseInt(localStorage.getItem(SK.expiry));
+  const timerEl = document.getElementById("session-timer");
+  const warning = document.getElementById("session-warning");
+
+  function updateTimer() {
     const left = Math.max(0, Math.ceil((expiry - now()) / 1000));
-    if (left === 0) { clearInterval(tick); showLock(); return; }
+    if (left === 0) { showLock(); return; }
     const h = String(Math.floor(left / 3600));
     const m = String(Math.floor((left % 3600) / 60)).padStart(2,"0");
-    const s = String(left % 60).padStart(2,"0");
-    timerEl.textContent = `Session : ${h}h${m}`;
-  }, 60000);
-  const left = Math.max(0, Math.ceil((expiry - now()) / 1000));
-  const h = String(Math.floor(left / 3600));
-  const m = String(Math.floor((left % 3600) / 60)).padStart(2,"0");
-  timerEl.textContent = `Session : ${h}h${m}`;
+    timerEl.textContent = "Session : " + h + "h" + m;
+    if (!warnShown && left <= WARN_BEFORE / 1000) {
+      warnShown = true;
+      warning.classList.add("visible");
+    }
+  }
+
+  updateTimer();
+  setInterval(updateTimer, 60000);
 }
 
+/* ── G — INACTIVITÉ ── */
+let idleTimer = null;
 
+function resetIdle() {
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => { if (isSessionValid()) showLock(); }, IDLE_LIMIT);
+}
 
-/* ── AUTO-RESTORE SESSION ── */
+function startIdleWatcher() {
+  ["mousemove","keydown","click","touchstart","scroll"].forEach(evt => {
+    document.addEventListener(evt, resetIdle, { passive: true });
+  });
+  resetIdle();
+}
+
+/* ── AUTO-RESTORE ── */
 if (isBlocked()) {
   showBlocked();
 } else if (isSessionValid()) {
